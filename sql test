@@ -1,0 +1,62 @@
+module "test-condition-sql" {
+  source = "../" # Assuming the parent module is in the parent directory; adjust path if needed.
+
+  # General configurations for the alert policy
+  alert_policy_display_name = "Test SQL Condition"
+  project_id                = "<YOUR_PROJECT_ID>" # Replace with your GCP project ID
+  alert_policy_combiner     = "AND"
+  alert_policy_severity     = "CRITICAL"
+
+  # Configuring alert conditions to test `condition_sql`
+  alert_conditions = [
+    {
+      display_name = "SQL Condition"
+      type         = "sql" # Triggering the `condition_sql` block
+      query        = "SELECT COUNT(*) FROM my_table WHERE status = 'FAILED'"
+
+      # Optional: Minutes periodicity
+      minutes = [
+        {
+          periodicity = "5m" # Every 5 minutes
+        }
+      ]
+
+      # Optional: Hourly periodicity
+      hourly = [
+        {
+          periodicity   = "1h"  # Every hour
+          minute_offset = 15    # Run at 15 minutes past the hour
+        }
+      ]
+
+      # Optional: Daily periodicity with execution time
+      daily = [
+        {
+          periodicity = "1d" # Every day
+          execution_time = [
+            {
+              hours   = 0
+              minutes = 0
+              seconds = 0
+              nanos   = 0
+            }
+          ]
+        }
+      ]
+
+      # Optional: Row count test
+      row_count_test = [
+        {
+          comparison = "GREATER_THAN"
+          threshold  = 100 # Trigger alert if row count exceeds 100
+        }
+      ]
+
+      # Optional: Boolean test
+      boolean_test = [
+        {
+          column = "is_active" # Check if the "is_active" column satisfies the condition
+        }
+      ]
+    }
+  ]
