@@ -1,0 +1,23 @@
+module "test-condition-monitoring-query-language" {
+  source = "../" # Assuming the parent module is in the parent directory; adjust if needed.
+
+  # General configurations for the alert policy
+  alert_policy_display_name = "Test Monitoring Query Language Condition"
+  project_id                = "<YOUR_PROJECT_ID>" # Replace with your GCP project ID
+  alert_policy_combiner     = "OR"
+  alert_policy_severity     = "WARNING"
+
+  # Configuring alert conditions to test `condition_monitoring_query_language`
+  alert_conditions = [
+    {
+      display_name = "Query Language Condition"
+      type         = "mql" # This triggers the `condition_monitoring_query_language` block
+      query        = "fetch gce_instance::compute.googleapis.com/instance/cpu/utilization | filter val() > 0.8 | group_by [resource.zone], [mean(val())]"
+      duration     = "300s" # 5 minutes
+      evaluation_missing_data = "EVALUATION_MISSING_DATA_INACTIVE"
+      trigger = {
+        count   = 1
+        percent = null
+      }
+    }
+  ]
